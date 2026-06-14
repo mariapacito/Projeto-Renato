@@ -60,7 +60,12 @@ export default function App() {
 
       <View style={styles.form}>
         <Text style={styles.titulo}>Adicionar Destino</Text>
-        <DestinoForm onSalvar={(lat, lon) => { inserirDestino(lat, lon); carregarDestinos(); }} />
+        <DestinoForm 
+          onSalvar={(lat, lon) => { 
+            inserirDestino(lat, lon); 
+            carregarDestinos(); // recarrega lista e mapa
+          }} 
+        />
       </View>
 
       <FlatList
@@ -69,9 +74,15 @@ export default function App() {
         renderItem={({ item }) => (
           <DestinoItem
             destino={item}
-            onAtualizar={(lat, lon) => { atualizarDestino(item.id, lat, lon); carregarDestinos(); }}
-            onDeletar={() => { deletarDestino(item.id); carregarDestinos(); }}
             localAtual={localAtual}
+            onAtualizar={(lat, lon) => { 
+              atualizarDestino(item.id, lat, lon); 
+              carregarDestinos(); // recarrega lista e mapa
+            }}
+            onDeletar={() => { 
+              deletarDestino(item.id); 
+              carregarDestinos(); // recarrega lista e mapa
+            }}
           />
         )}
       />
@@ -82,9 +93,6 @@ export default function App() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   mapa: { flex: 1 },
-  form: { padding: 10,
-     backgroundColor: '#fff' },
-  titulo: { fontSize: 18,
-     fontWeight: 'bold',
-      marginBottom: 10 }
+  form: { padding: 10, backgroundColor: '#fff' },
+  titulo: { fontSize: 18, fontWeight: 'bold', marginBottom: 10 }
 });

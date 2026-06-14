@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button } from 'react-native';
+import { View, Text, Button, TextInput } from 'react-native';
 
 export default function DestinoItem({ destino, onAtualizar, onDeletar, localAtual }) {
-  const [lat, setLat] = useState(destino.latitude ? destino.latitude.toString() : '');
-  const [lon, setLon] = useState(destino.longitude ? destino.longitude.toString() : '');
+  const [lat, setLat] = useState(destino.latitude?.toString() || '');
+  const [lon, setLon] = useState(destino.longitude?.toString() || '');
 
   const calcularDistancia = () => {
     if (!localAtual || !destino.latitude || !destino.longitude) return null;
-    const R = 6371;
+    const R = 6371; // raio da Terra em km
     const dLat = (destino.latitude - localAtual.latitude) * Math.PI / 180;
     const dLon = (destino.longitude - localAtual.longitude) * Math.PI / 180;
     const a =
@@ -18,23 +18,36 @@ export default function DestinoItem({ destino, onAtualizar, onDeletar, localAtua
     return (R * c).toFixed(2);
   };
 
+  const handleAtualizar = () => {
+    if (!lat || !lon) {
+      alert("Preencha latitude e longitude");
+      return;
+    }
+    onAtualizar(Number(lat), Number(lon));
+  };
+
   return (
     <View style={{ marginVertical: 10, padding: 10, borderWidth: 1 }}>
       <Text>Destino #{destino.id ?? 'novo'}</Text>
+
       <TextInput
+        placeholder="Latitude"
         value={lat}
         onChangeText={setLat}
         keyboardType="numeric"
-        style={{ borderWidth: 1, marginVertical: 5 }}
+        style={{ borderWidth: 1, marginVertical: 5, padding: 5 }}
       />
       <TextInput
+        placeholder="Longitude"
         value={lon}
         onChangeText={setLon}
         keyboardType="numeric"
-        style={{ borderWidth: 1, marginVertical: 5 }}
+        style={{ borderWidth: 1, marginVertical: 5, padding: 5 }}
       />
-      <Button title="Atualizar" onPress={() => onAtualizar(parseFloat(lat), parseFloat(lon))} />
+
+      <Button title="Atualizar" onPress={handleAtualizar} />
       <Button title="Deletar" onPress={onDeletar} color="red" />
+
       {localAtual && <Text>Distância até aqui: {calcularDistancia()} km</Text>}
     </View>
   );
